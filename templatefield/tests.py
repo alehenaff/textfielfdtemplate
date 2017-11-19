@@ -10,3 +10,12 @@ class TextFieldTemplateTest(TestCase):
     def test_simple_render(self):
         a = TextFieldTemplate.objects.first()
         self.assertEqual(a.rendertemplate(),'Bonjour toto, Paris')
+    
+    def test_jinja_render(self):
+        a = TextFieldTemplate.objects.first()
+        self.assertEqual(a.rendertemplate(),'Bonjour toto, Paris')
+
+    def test_undefined_variables(self):
+        a = TextFieldTemplate.objects.first()
+        self.assertEqual(a.get_undefined_variables(),{'client'})
+
