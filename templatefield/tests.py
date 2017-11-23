@@ -7,7 +7,7 @@ class TextFieldTemplateTest(TestCase):
     def setUp(self):
         TextFieldTemplate.objects.create(template='Bonjour {{client.name}}, {{client.address}}',
         context='{"client":{"name":"toto","address":"Paris"}}')
-        TextFieldTemplate.objects.create(template='{{domaine.name|simplesubstition("aerodom")}}',
+        TextFieldTemplate.objects.create(template='{{domaine.name|simplesubstitution("aerodom")}}',
         context='{"domaine":{"name":"atlantique"}}')
         Substitution.objects.create(name='aerodom',key='atlantique',value='z')
     
@@ -25,4 +25,4 @@ class TextFieldTemplateTest(TestCase):
 
     def test_filter(self):
         a = TextFieldTemplate.objects.last()
-        self.assertEqual(a.rendertemplatejinja(filters=[('simplesustitution',simplesubstitution)]),'z')
+        self.assertEqual(a.rendertemplatejinja(filters=[('simplesubstitution',simplesubstitution)]),'z')
