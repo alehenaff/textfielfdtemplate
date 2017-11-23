@@ -1,6 +1,7 @@
 from django.db import models
 from django.template import Template, Context
 from django.template.base import VariableNode
+import jinja2
 from jinja2 import Environment, meta
 import json
 
@@ -30,22 +31,25 @@ class TextFieldTemplate(models.Model):
     def get_undefined_variables(self):
         try:
             env = Environment()
-        except:
-            return("env error")
-        try:
             parsed_context = env.parse(self.template)
             return meta.find_undeclared_variables(parsed_context)
-        except:
-            return("parse error")
+        except Exception as ex:
+            return(ex)
 
-    def rendertemplatejinja(self):
+    def rendertemplatejinja(self, filters= None):
         try:
-            t=jinja2.Template(self.template)
-            try: 
-                c=Context(json.loads(self.context))
-                return t.render(c)
-            except:
-                return("context error")
-        except:
-            return("error")
+            e = jinja2.Environment()
+            if filters:
+                for filtername, filter in filters:
+                    e.filters[filtername]=filter
+            tem = e.from_string(self.template)    
+            return tem.render(json.loads(self.context))
+        except Exception as ex:
+            return(ex)
 
+class Substitution(models.Model):
+    name = models.CharField(max_length=70)
+    key = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    class Meta:
+        unique_together = (('name','key','value'))
